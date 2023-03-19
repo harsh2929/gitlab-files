@@ -1,0 +1,27 @@
+before_script:
+  - apt-get update
+  - apt-get install -y build-essential cmake libboost-all-dev libgsl-dev libyaml-cpp-dev
+
+build_lhapdf:
+  script:
+    - wget https://lhapdf.hepforge.org/downloads/?f=LHAPDF-6.5.4.tar.gz
+    - tar zxvf lhapdf-6.5.4.tar.gz
+    - cd lhapdf-6.5.4
+    - mkdir build && cd build
+    - cmake .. && make && make install
+
+
+install_nnpdf_dataset:
+  script:
+    - lhapdf install NNPDF40_nnlo_as_0118
+
+test_pdf_stability:
+  stage: test
+  script:
+    - python test_pdf_stability.py
+
+test_pdf_functionality:
+  stage: test
+  script:
+    - python interpol.py
+    - python lhapdf_tolerance.py
